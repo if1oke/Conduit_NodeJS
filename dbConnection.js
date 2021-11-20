@@ -1,11 +1,11 @@
 const {Sequelize} = require('sequelize')
 
 //LOCAL CONNECTION
-/* const sequelize = new Sequelize('conduit','root','password',{
+const sequelize = new Sequelize('base','store','Wex755!a',{
     dialect: 'mysql',
     host:'localhost',
     logging: false
-}); */
+});
 
 
 //AMAZON RDS CONNECTION
@@ -16,18 +16,18 @@ const {Sequelize} = require('sequelize')
     port: 3306
 });
  */
-const sequelize = new Sequelize('d6rk5ijgmvcf6q',process.env.USER_NAME,process.env.PASSWORD,{
-    dialect: 'postgres',
-    host: process.env.DB_HOST,
-    logging: false,
-    port: 5432,
-    dialectOptions: {
-        ssl: {
-            require: true,
-            rejectUnauthorized: false // <<<<<<< YOU NEED THIS
-        }
-    }
-});
+// const sequelize = new Sequelize('d6rk5ijgmvcf6q',process.env.USER_NAME,process.env.PASSWORD,{
+//     dialect: 'postgres',
+//     host: process.env.DB_HOST,
+//     logging: false,
+//     port: 5432,
+//     dialectOptions: {
+//         ssl: {
+//             require: true,
+//             rejectUnauthorized: false // <<<<<<< YOU NEED THIS
+//         }
+//     }
+// });
 
 const checkConnection =async () => {
     try {

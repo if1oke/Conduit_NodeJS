@@ -1,10 +1,10 @@
-const Article = require('../models/Article')
+const Product = require('../models/Products')
 const User = require('../models/User')
 const Comment = require('../models/Comments')
 
 module.exports.postNewComment = async (req,res) => {
     try{
-        const slugInfo = req.params.slug
+        const idProduct = req.params.id
         const data = req.body.comment
         //Throw error if no data
         if(!data){
@@ -18,16 +18,16 @@ module.exports.postNewComment = async (req,res) => {
         }
 
         //Find for article
-        const article = await Article.findByPk(slugInfo)
-        if(!article){
+        const product = await Product.findByPk(idProduct)
+        if(!product){
             res.status(404)
-            throw new Error('Article not found')
+            throw new Error('Product not found')
         }
         
         //Checking whthter this user has aldready posted a comment
         const existingComment = await Comment.findAll({where:{UserEmail: req.user.email}})
         if(existingComment.length > 0){
-            throw new Error('You aldready added a review')
+            throw new Error('You aldready added a comment')
         }
 
         //Create new Comment
@@ -38,7 +38,7 @@ module.exports.postNewComment = async (req,res) => {
 
         //assosiations
         user.addComments(newComment)
-        article.addComments(newComment)
+        product.addComments(newComment)
 
         //Send output
         newComment.dataValues.author = {
@@ -52,25 +52,25 @@ module.exports.postNewComment = async (req,res) => {
     }catch(e) {
         const code = res.statusCode ? res.statusCode : 422
         return res.status(code).json({
-            errors: { body: [ 'Could not create article', e.message ] }
+            errors: { body: [ 'Could not create comment', e.message ] }
         })
     }
 }
 
 module.exports.getAllComments = async (req,res) => {
     try{
-        const slugInfo = req.params.slug
+        const idProduct = req.params.id
 
         //Find for article
-        const article = await Article.findByPk(slugInfo)
-        if(!article){
+        const product = await Product.findByPk(idProduct)
+        if(!product){
             res.status(404)
-            throw new Error('Article Slug not valid')
+            throw new Error('Product id not valid')
         }
         
         const comments = await Comment.findAll({
             where:{
-                ArticleSlug: slugInfo
+                ProductId: idProduct
             },
             include:[
                 {
@@ -85,43 +85,43 @@ module.exports.getAllComments = async (req,res) => {
     }catch(e) {
         const code = res.statusCode ? res.statusCode : 422
         return res.status(code).json({
-            errors: { body: [ 'Could not create article', e.message ] }
+            errors: { body: [ 'Could not find product', e.message ] }
         })
     }
 }
 
 module.exports.deleteComment = async (req,res) => {
     try{
-        const slugInfo = req.params.slug
-        const idInfo = req.params.id
+        const productId = req.params.id
+        const commentId = req.params.comment_id
         //Find for article
-        const article = await Article.findByPk(slugInfo)
-        if(!article){
+        const product = await Product.findByPk(productId)
+        if(!product){
             res.status(404)
-            throw new Error('Article not found')
+            throw new Error('Product not found')
         }
         
         //Find for comment
-        const comment = await Comment.findByPk(idInfo)
+        const comment = await Comment.findByPk(commentId)
         if(!comment){
             res.status(404)
             throw new Error('Comment not found')
         }
 
         //Check whether logged in user is the author of that comment
-        if(req.user.email != comment.UserEmail){
-            res.status(403)
-            throw new Error("You must be the author to modify this comment")
-        }
+        // if(req.user.email != comment.UserEmail){
+        //     res.status(403)
+        //     throw new Error("You must be the author to modify this comment")
+        // }
 
         //Delete comment
-        await Comment.destroy({where:{id:idInfo}})
+        await Comment.destroy({where:{id:commentId}})
         res.status(200).json({"message":"Comment deleted successfully"})
 
     }catch(e) {
         const code = res.statusCode ? res.statusCode : 422
         return res.status(code).json({
-            errors: { body: [ 'Could not create article', e.message ] }
+            errors: { body: [ 'Could not delete comment', e.message ] }
         })
     }
 }

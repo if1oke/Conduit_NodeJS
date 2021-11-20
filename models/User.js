@@ -9,8 +9,7 @@ const User = sequelize.define('User',{
     },
     username:{
         type: DataTypes.STRING,
-        allowNull: false,
-        unique: true
+        allowNull: false
     },
     bio: {
         type: DataTypes.TEXT,
@@ -25,7 +24,10 @@ const User = sequelize.define('User',{
         allowNull: false
     }
 },{
-    timestamps: false
+    timestamps: false,
+    indexes: [
+        { fields: ['username'], unique: true}
+    ]
 })
 
 
