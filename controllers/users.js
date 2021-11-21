@@ -6,6 +6,7 @@ const {sign,decode} = require('../utils/jwt')
 
 module.exports.createUser = async (req,res) => {
     try{
+        console.log(res.body)
         if(!req.body.user.username) throw new Error("Username is Required")
         if(!req.body.user.email) throw new Error("Email is Required")
         if(!req.body.user.password) throw new Error("Password is Required")

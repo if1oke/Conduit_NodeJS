@@ -3,7 +3,7 @@ const {Sequelize} = require('sequelize')
 //LOCAL CONNECTION
 const sequelize = new Sequelize('base','store','Wex755!a',{
     dialect: 'mysql',
-    host:'localhost',
+    host:'127.0.0.1',
     logging: false
 });
 

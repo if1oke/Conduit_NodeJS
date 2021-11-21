@@ -71,6 +71,16 @@ app.use(morgan('tiny'))
 app.get('/',(req,res) => {
     res.json({status:"API is running"});
 })
+// FRONTEND
+app.use('/static', express.static('static'))
+app.use('/registration', (request, response) => {
+    response.sendFile(__dirname + '/static/registration.html')
+})
+app.use('/product', (request, response) => {
+    response.sendFile(__dirname + '/static/products.html')
+})
+
+// BACKEND
 app.use('/api',userRoute)
 app.use('/api/articles',articleRoute)
 app.use('/api/products',commentRoute)
@@ -81,6 +91,8 @@ app.use('/api/products', productRoute)
 app.use('/api/cart', cartRoute)
 app.use(notFound)
 app.use(errorHandler)
+
+
 
 const PORT = process.env.PORT || 8080
 
