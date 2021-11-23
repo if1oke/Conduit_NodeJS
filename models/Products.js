@@ -33,6 +33,9 @@ const Products = sequelize.define('Products', {
     available: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
+    },
+    image: {
+        type: DataTypes.STRING
     }
 })
 

@@ -1,4 +1,26 @@
-const submitProduct = () => {
+const submit = () => {
+    const file = $('#image').prop('files')[0]
+    if (file){
+        let data = new FormData()
+        data.append('image', file)
+        fetch('/api/products/upload', {
+            method: 'POST',
+            body: data
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.fileName) {
+                    submitProduct(res.fileName)
+                } else {
+                    throw new Error('Ошибка загрузки файла')
+                }
+            })
+    } else {
+        submitProduct()
+    }
+}
+
+const submitProduct = (image = null) => {
     const category = $('#category').val();
     const name = $('#name').val();
     const description = $('#description').val();
@@ -29,9 +51,12 @@ const submitProduct = () => {
             weight,
             price,
             tagList,
-            available
+            available,
+            image: image
         }
     }
+
+    console.log(message)
 
     if (headerToken) {
         fetch('/api/products/', {
@@ -84,7 +109,7 @@ const loadProducts = () => {
 }
 
 $('#productCreateSubmit').click(() => {
-    submitProduct()
+    submit()
 })
 
 loadProducts()

@@ -22,10 +22,16 @@ const favouriteRoute = require('./routes/favourites')
 const productRoute = require('./routes/products')
 const cartRoute = require('./routes/cart')
 
+const fileUpload = require('express-fileupload');
+
 const app = express()
 
 //CORS
-app.use(cors({credentials: true, origin: true})) 
+app.use(cors({credentials: true, origin: true}))
+
+app.use(fileUpload({
+    createParentPath: true
+}))
 
 
 
@@ -78,6 +84,9 @@ app.use('/registration', (request, response) => {
 })
 app.use('/product', (request, response) => {
     response.sendFile(__dirname + '/static/products.html')
+})
+app.use('/login', (request, response) => {
+    response.sendFile(__dirname + '/static/login.html')
 })
 
 // BACKEND

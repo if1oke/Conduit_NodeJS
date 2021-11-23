@@ -1,16 +1,43 @@
 const Tag = require('../models/Tag');
 const Products = require('../models/Products');
-const sequelize = require('../dbConnection');
+const crypto = require('crypto')
+const mime = require('mime-types')
+
+module.exports.uploadImage = async (req, res) => {
+    try {
+
+        if (!req.files || Object.keys(req.files).length === 0) {
+            return res.status(400).send('No files were uploaded.');
+        }
+
+        const file = req.files.image
+        const hashName = crypto.createHash('sha1').update(file.name + new Date().getMilliseconds()).digest('hex')
+        const path = __dirname + '/../static/upload/' + hashName + '.' + mime.extension(file.mimetype)
+        await file.mv(path, (err) => {
+            if (err) {
+                return res.status(500).send(err)
+            } else {
+                res.status(200).json({'fileName': `${hashName}.${mime.extension(file.mimetype)}`})
+            }
+        })
+    } catch (e) {
+        return res.status(422).json({
+            errors: { body: ['Could not create product', e.message] },
+        });
+    }
+}
 
 module.exports.createProduct = async (req, res) => {
     try {
         const data = req.body.product;
+        console.log(data)
         if (!data.category) throw new Error('No category selected');
         if (!data.name) throw new Error('Name is required');
         if (!data.description) throw new Error('Description is required');
         if (!data.price) throw new Error('Price is required');
         if (!data.weight) throw new Error('Weight is requred');
-        if (!data.available) throw new Error('Available is required');
+
+        if (!data.image) data.image = null;
 
         let product = await Products.create({
             category: data.category,
@@ -18,7 +45,8 @@ module.exports.createProduct = async (req, res) => {
             description: data.description,
             price: data.price,
             weight: data.weight,
-            available: data.available
+            available: data.available,
+            image: data.image
         })
 
         if (data.tagList) {

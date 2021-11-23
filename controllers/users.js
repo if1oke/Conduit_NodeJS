@@ -37,6 +37,7 @@ module.exports.createUser = async (req,res) => {
 
 module.exports.loginUser = async (req,res) => {
     try{
+        console.log(req.body)
         if(!req.body.user.email) throw new Error('Email is Required')
         if(!req.body.user.password) throw new Error('Password is Required')
 

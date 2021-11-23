@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Вход</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-6">
+            <div class="mt-3 mb-3">
+                <input type="email" id="email" aria-label="Email" placeholder="Email" class="form-control">
+            </div>
+            <div class="mb-3">
+                <input type="password" id="password" aria-label="Пароль" placeholder="Password" class="form-control">
+            </div>
+            <div>
+                <button type="button" class="btn btn-primary" id="doLogin" onclick="doLogin()">Войти</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/js/jquery-3.6.0.min.js"></script>
+<script src="/static/js/bootstrap.js"></script>
+<script>
+    const doLogin = () => {
+        const email = $('#email').val()
+        const password = $('#password').val()
+        if (!email || !password) {
+            throw new Error('Заполните все поля')
+        }
+        fetch('/api/users/login', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                user: {
+                    email: email,
+                    password: password
+                }
+            })
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.user) {
+                    setCookie('AuthToken', `${res.user.token}`, {'max-age': 24*60*60})
+                    document.location('/product')
+                } else {
+                    throw new Error(res.errors.body)
+                }
+            })
+            .catch(e => {
+                throw new Error(e)
+            })
+    }
+
+    const setCookie = (name, value, options = {}) => {
+        options = {
+            path: '/',
+            ...options
+        };
+        if (options.expires instanceof Date) {
+            options.expires = options.expires.toUTCString();
+        }
+        let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+        for (let optionKey in options) {
+            updatedCookie += "; " + optionKey;
+            let optionValue = options[optionKey];
+            if (optionValue !== true) {
+                updatedCookie += "=" + optionValue;
+            }
+        }
+        document.cookie = updatedCookie;
+    }
+</script>
+</body>
+</html>
