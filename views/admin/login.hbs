@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/adminui/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="/static/adminui/img/favicon.png">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+    <link href="/static/adminui/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="/static/adminui/css/nucleo-svg.css" rel="stylesheet" />
+    <!-- Font Awesome Icons -->
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <link href="/static/adminui/css/nucleo-svg.css" rel="stylesheet" />
+    <link id="pagestyle" href="/static/adminui/css/soft-ui-dashboard.css?v=1.0.3" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/adminui/css/toastr.min.css">
+    <title>{{title}}</title>
+</head>
+<body>
+<main class="main-content mt-0">
+    <section>
+        <div class="page-header min-vh-75">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-4 col-lg-5 col-md-6 d-flex flex-column mx-auto">
+                        <div class="card card-plain mt-8">
+                            <div class="card-header pb-0 text-left bg-transparent">
+                                <h3 class="font-weight-bolder text-danger text-gradient mb-0">NiAdmin</h3>
+                                <h3 class="font-weight-bolder text-info text-gradient">Добро пожаловать!</h3>
+                                <p>Введи свой email и пароль для входа</p>
+                            </div>
+                            <div class="card-body">
+                                <label>Email</label>
+                                <div class="mb-3">
+                                    <input id="email" type="email" class="form-control" placeholder="Email" aria-label="Email" aria-describedby="email-addon">
+                                </div>
+                                <label>Пароль</label>
+                                <div class="mb-3">
+                                    <input id="password" type="password" class="form-control" placeholder="Пароль" aria-label="Password" aria-describedby="password-addon">
+                                </div>
+                                <div class="text-center">
+                                    <button type="button" class="btn bg-gradient-info w-100 mt-4 mb-0" onclick="doLogin()">Войти</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="oblique position-absolute top-0 h-100 d-md-block d-none me-n8">
+                            <div class="oblique-image bg-cover position-absolute fixed-top ms-auto h-100 z-index-0 ms-n6" style="background-image:url('/static/adminui/img/curved-images/curved6.jpg')"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<footer>
+    <div class="row mt-5" style="--bs-gutter-x: 0">
+        <div class="col-8 mx-auto text-center mt-1">
+            <p class="mb-0 text-secondary">
+                Copyright © <script>
+                document.write(new Date().getFullYear())
+            </script> Igor Fedorov
+            </p>
+        </div>
+    </div>
+</footer>
+<script src="/static/adminui/js/core/jquery-3.6.0.min.js"></script>
+<script src="/static/adminui/js/core/popper.min.js"></script>
+<script src="/static/adminui/js/core/bootstrap.min.js"></script>
+<script src="/static/adminui/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="/static/adminui/js/plugins/smooth-scrollbar.min.js"></script>
+<script src="/static/adminui/js/plugins/toastr.min.js"></script>
+<script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+        var options = {
+            damping: '0.5'
+        }
+        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+</script>
+<script src="/static/adminui/js/soft-ui-dashboard.min.js?v=1.0.3"></script>
+<script>
+    $(document).on('keyup', (e) => {
+        if (e.key === 'Enter') {
+            doLogin()
+        }
+    })
+
+    const doLogin = () => {
+        const email = $('#email').val()
+        const password = $('#password').val()
+        if (!email || !password) {
+            toastr.error('Заполните все поля')
+            throw new Error('Заполните все поля')
+        }
+        fetch('/api/users/login', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                user: {
+                    email: email,
+                    password: password
+                }
+            })
+        })
+                .then(res => res.json())
+                .then(res => {
+                    console.log(res)
+                    if (res.user && res.user.isAdmin === true) {
+                        setCookie('AuthToken', `${res.user.token}`, {secure: true, 'max-age': 24*60*60})
+                        toastr.success('Вход выполнен успешно!')
+                        setTimeout(() => {
+                            document.location.href = '/admin'
+                        }, 1000)
+                    } else {
+                        toastr.error('Логин или пароль указаны неверно')
+                        throw new Error(res.errors.body)
+                    }
+                })
+                .catch(e => {
+                    throw new Error(e)
+                })
+    }
+
+    const setCookie = (name, value, options = {}) => {
+        options = {
+            path: '/',
+            ...options
+        };
+        if (options.expires instanceof Date) {
+            options.expires = options.expires.toUTCString();
+        }
+        let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+        for (let optionKey in options) {
+            updatedCookie += "; " + optionKey;
+            let optionValue = options[optionKey];
+            if (optionValue !== true) {
+                updatedCookie += "=" + optionValue;
+            }
+        }
+        document.cookie = updatedCookie;
+    }
+</script>
+</body>
+</html>

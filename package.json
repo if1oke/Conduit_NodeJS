@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "nodemon -e js,hbs index.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
     "express": "^4.17.1",
     "express-async-handler": "^1.1.4",
     "express-fileupload": "^1.2.1",
+    "hbs": "^4.2.0",
     "jsonwebtoken": "^8.5.1",
     "mime-types": "^2.1.34",
     "morgan": "^1.10.0",

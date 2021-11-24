@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/adminui/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="/static/adminui/img/favicon.png">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="/static/adminui/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="/static/adminui/css/nucleo-svg.css" rel="stylesheet" />
+    <!-- Font Awesome Icons -->
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <link href="/static/adminui/css/nucleo-svg.css" rel="stylesheet" />
+    <link id="pagestyle" href="/static/adminui/css/soft-ui-dashboard.css?v=1.0.3" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/adminui/css/toastr.min.css">
+    <title>{{title}}</title>
+</head>
+<body class="g-sidenav-show bg-gray-100">
+<script>
+    let User = undefined
+
+    const deleteCookie = (name) => {
+        setCookie(name, "", {
+            'max-age': -1
+        })
+    }
+
+    const getCookie = name => {
+        let matches = document.cookie.match(new RegExp(
+                "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+        ));
+        return matches ? decodeURIComponent(matches[1]) : undefined;
+    }
+
+    const setCookie = (name, value, options = {}) => {
+        options = {
+            path: '/',
+            ...options
+        };
+        if (options.expires instanceof Date) {
+            options.expires = options.expires.toUTCString();
+        }
+        let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+        for (let optionKey in options) {
+            updatedCookie += "; " + optionKey;
+            let optionValue = options[optionKey];
+            if (optionValue !== true) {
+                updatedCookie += "=" + optionValue;
+            }
+        }
+        document.cookie = updatedCookie;
+    }
+
+    let headerToken = null
+
+    if (getCookie('AuthToken')) {
+        headerToken = `Token ${getCookie('AuthToken')}`
+    } else {
+        document.location.href = '/admin/login'
+    }
+
+    const getUserInfo = () => {
+        fetch('/api/user', {
+            headers: {
+                'Authorization': headerToken
+            }
+        })
+        .then(res => res.json())
+        .then(res => {
+            User = res.user
+            if (User.isAdmin !== true) {
+                document.location.href = '/admin/login'
+            }
+        })
+    }
+
+    getUserInfo()
+
+</script>
+
+{{> admin_sidenav}}
+
+<div class="main-content position-relative bg-gray-100 max-height-vh-100 h-100">
+    {{> admin_navbar}}
+
+    {{{body}}}
+</div>
+
+<script src="/static/adminui/js/core/jquery-3.6.0.min.js"></script>
+<script src="/static/adminui/js/core/popper.min.js"></script>
+<script src="/static/adminui/js/core/bootstrap.min.js"></script>
+<script src="/static/adminui/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="/static/adminui/js/plugins/smooth-scrollbar.min.js"></script>
+<script src="/static/adminui/js/plugins/chartjs.min.js"></script>
+<script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+        var options = {
+            damping: '0.5'
+        }
+        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+</script>
+<script src="/static/adminui/js/soft-ui-dashboard.min.js?v=1.0.3"></script>
+</body>
+</html>

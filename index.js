@@ -1,5 +1,6 @@
 const dotenv = require('dotenv').config()
 const express = require('express')
+const hbs = require('hbs')
 const morgan = require('morgan')
 const cors = require('cors')
 
@@ -22,6 +23,9 @@ const favouriteRoute = require('./routes/favourites')
 const productRoute = require('./routes/products')
 const cartRoute = require('./routes/cart')
 
+const frontendAdminRoute = require('./routes/frAdmin')
+const frontendUserRoute = require('./routes/frUser')
+
 const fileUpload = require('express-fileupload');
 
 const app = express()
@@ -32,6 +36,9 @@ app.use(cors({credentials: true, origin: true}))
 app.use(fileUpload({
     createParentPath: true
 }))
+
+app.set('view engine', 'hbs')
+hbs.registerPartials(__dirname + '/views/partials')
 
 
 
@@ -79,15 +86,17 @@ app.get('/',(req,res) => {
 })
 // FRONTEND
 app.use('/static', express.static('static'))
-app.use('/registration', (request, response) => {
-    response.sendFile(__dirname + '/static/registration.html')
-})
-app.use('/product', (request, response) => {
-    response.sendFile(__dirname + '/static/products.html')
-})
-app.use('/login', (request, response) => {
-    response.sendFile(__dirname + '/static/login.html')
-})
+// app.use('/registration', (request, response) => {
+//     response.sendFile(__dirname + '/static/registration.html')
+// })
+// app.use('/product', (request, response) => {
+//     response.sendFile(__dirname + '/static/products.html')
+// })
+// app.use('/login', (request, response) => {
+//     response.sendFile(__dirname + '/static/login.html')
+// })
+app.use('/admin', frontendAdminRoute)
+// app.use('/', frontendUserRoute)
 
 // BACKEND
 app.use('/api',userRoute)
