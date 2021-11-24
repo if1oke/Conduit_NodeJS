@@ -16,4 +16,12 @@ router.get('/', (req, res) => {
     })
 })
 
+router.get('/users', (req, res) => {
+    res.render('admin/users.hbs', {
+        layout: 'layouts/layout_admin',
+        title: 'Учетные записи',
+        breadcrumb: ['Главная страница', 'Пользователи']
+    })
+})
+
 module.exports = router

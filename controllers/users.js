@@ -72,6 +72,18 @@ module.exports.loginUser = async (req,res) => {
     }
 }
 
+module.exports.getAllUsers = async (req, res) => {
+    try {
+        const users = await User.findAll()
+        return res.status(200).json({users})
+    } catch (e) {
+        const status = res.statusCode ? res.statusCode : 500
+        return res.status(status).json({
+            errors: { body: [ e.message ] }
+        })
+    }
+}
+
 module.exports.getUserByEmail = async (req,res) => {
     try{
         const user = await User.findByPk(req.user.email)
