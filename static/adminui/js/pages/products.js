@@ -25,6 +25,67 @@ const getCategories = () => {
         })
 }
 
+const getProducts = () => {
+    $('#productsLoader').show()
+    fetch('/api/products')
+        .then(res => res.json())
+        .then(res => {
+
+            let chartData = {}
+            let productStat = {
+                available: 0,
+                total: 0
+            }
+            const data = res.products
+            data.forEach(item => {
+                productStat.total++
+                if (item.available === true) {
+                    productStat.available++
+                }
+                if (item.CategoryName in chartData) {
+                    chartData[item.CategoryName]++
+                }  else {
+                    chartData[item.CategoryName] = 1
+                }
+            })
+
+            $('#productsStatCount').html(`<span class="badge badge-circle bg-gradient-primary">${productStat.total}</span>`)
+            $('#productsStatAvailable').html(`<span class="badge badge-circle bg-gradient-primary">${productStat.available}</span>`)
+
+            $('#productsLoader').hide()
+            if ($.fn.dataTable.isDataTable('#productsTable')) {
+                $('#productsTable').DataTable().destroy()
+            }
+            $('#productsTable').DataTable({
+                lengthChange: false,
+                language: {
+                    url: '/static/adminui/datatable_ru.json'
+                },
+                data: data,
+                columns: [
+                    {data: 'image', fnCreatedCell: function (nTd, sData, oData) {
+                        if(oData.image) $(nTd).html(`<div class="d-flex px-2"><div><img src="/static/upload/${oData.image}" class="avatar avatar-sm rounded-circle me-2"></div></div>`)
+                        }},
+                    {data: 'name', fnCreatedCell: function (nTd, sData, oData) {
+                            $(nTd).html(`<a href="#">${oData.name}</a>`)
+                        }},
+                    {data: 'CategoryName'},
+                    {data: 'tagList'},
+                    {data: 'weight'},
+                    {data: 'price'},
+                    {data: 'available', fnCreatedCell: function (nTd, sData, oData) {
+                        if (oData.available === true) {
+                            $(nTd).html('<span class="badge bg-gradient-primary"><span class="mdi mdi-check text-white"></span></span>')
+                        } else {
+                            $(nTd).html('<span class="badge bg-gradient-secondary"><span class="mdi mdi-cancel text-white"></span></span>')
+                        }
+                        }}
+                ]
+            })
+            productsChart(chartData)
+        })
+}
+
 const editClick = (item) => {
     const catName = (item.id).replace('_edit', '')
     $(`#${catName}_name`).hide()
@@ -51,6 +112,7 @@ const deleteClick = item => {
                     toastr.error('Произошла ошибка')
                 }
                 getCategories()
+                getProducts()
             })
     }
 }
@@ -78,6 +140,7 @@ const saveClick = (item) => {
                 toastr.error('Произошла ошибка')
             }
             getCategories()
+            getProducts()
         })
 }
 
@@ -105,6 +168,7 @@ const addCategory = () => {
                     toastr.error('Произошла ошибка')
                 }
                 getCategories()
+                getProducts()
             })
     } else {
         toastr.error('Слишком короткое имя')
@@ -115,4 +179,75 @@ const showCategoryAdd = () => {
     $('#categoryAdd').toggle('fast')
 }
 
+const productsChart = (data) => {
+    const ctx = document.getElementById('productsChart').getContext('2d')
+    let gradientStroke = ctx.createLinearGradient(500, 0, 100, 0);
+    gradientStroke.addColorStop(0, "#80b6f4");
+    gradientStroke.addColorStop(1, "#f49080");
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(data),
+            datasets: [{
+                borderWidth: 0,
+                borderRadius: 6,
+                borderSkipped: false,
+                backgroundColor: gradientStroke,
+                data: Object.values(data),
+                maxBarThickness: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+            scales: {
+                y: {
+                    grid: {
+                        drawBorder: false,
+                        display: false,
+                        drawOnChartArea: false,
+                        drawTicks: false,
+                    },
+                    ticks: {
+                        suggestedMin: 0,
+                        suggestedMax: 500,
+                        beginAtZero: true,
+                        padding: 15,
+                        font: {
+                            size: 14,
+                            family: 'Roboto',
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                        color: "#850c7a"
+                    },
+                },
+                x: {
+                    grid: {
+                        drawBorder: false,
+                        display: false,
+                        drawOnChartArea: false,
+                        drawTicks: false
+                    },
+                    ticks: {
+                        display: false
+                    },
+                },
+            }
+        }
+    })
+}
+
 getCategories()
+getProducts()
+
+// TODO: Поправить удаление графика при повторном запросе данных
