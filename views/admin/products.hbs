@@ -1,0 +1,26 @@
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header pb-1 pe-3">
+                    <h5 class="card-title">
+                        Категории <button onclick="showCategoryAdd()" class="shadow btn px-3 py-1 btn-sm btn-success bg-gradient-success float-end font-weight-bolder" type="button">+</button>
+                    </h5>
+                </div>
+                <div class="card-body px-3 pt-1 pb-3">
+                    <div id="categoryAdd" class="mb-3" style="display: none">
+                        <input type="text" id="categoryAddInput" placeholder="Название..." aria-label="Категория" class="form-control w-auto d-inline-block">
+                        <button type="button" class="btn btn-primary float-end mb-0" onclick="addCategory()">Добавить</button>
+                    </div>
+                    <div id="categoryList">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+
+        </div>
+    </div>
+</div>
+<script src="/static/adminui/js/pages/products.js"></script>

@@ -112,7 +112,6 @@
         })
                 .then(res => res.json())
                 .then(res => {
-                    console.log(res)
                     if (res.user && res.user.isAdmin === true) {
                         setCookie('AuthToken', `${res.user.token}`, {secure: true, 'max-age': 24*60*60})
                         toastr.success('Вход выполнен успешно!')
@@ -125,7 +124,7 @@
                     }
                 })
                 .catch(e => {
-                    throw new Error(e)
+
                 })
     }
 

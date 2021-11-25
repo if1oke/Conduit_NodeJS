@@ -88,8 +88,6 @@ module.exports.createArticle = async (req, res) => {
 module.exports.getSingleArticleBySlug = async (req, res) => {
 	try {
 		const { slug } = req.params;
-		console.log('HEllo');
-		console.log(slug);
 		let article = await Article.findByPk(slug, { include: Tag });
 
 		const user = await article.getUser();

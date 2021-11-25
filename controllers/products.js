@@ -123,6 +123,7 @@ module.exports.updateProduct = async (req, res) => {
         const weight = data.weight ? data.weight : product.weight
 
         const updatedProduct = await product.update({category, name, description, price, available, weight})
+        await product.save()
         res.status(200).json({updatedProduct})
     } catch (e) {
         const code = res.statusCode ? res.statusCode : 422

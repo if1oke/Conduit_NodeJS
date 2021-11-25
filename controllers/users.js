@@ -43,7 +43,6 @@ module.exports.createUser = async (req,res) => {
 
 module.exports.loginUser = async (req,res) => {
     try{
-        console.log(req.body)
         if(!req.body.user.email) throw new Error('Email is Required')
         if(!req.body.user.password) throw new Error('Password is Required')
 
@@ -74,7 +73,11 @@ module.exports.loginUser = async (req,res) => {
 
 module.exports.getAllUsers = async (req, res) => {
     try {
-        const users = await User.findAll()
+        let users = await User.findAll()
+        users.forEach(item => {
+            item.dataValues.purchases = 0
+            item.dataValues.earnings = 0
+        })
         return res.status(200).json({users})
     } catch (e) {
         const status = res.statusCode ? res.statusCode : 500

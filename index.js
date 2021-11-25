@@ -13,6 +13,7 @@ const Tag = require('./models/Tag')
 const Comment = require('./models/Comments')
 const Product = require('./models/Products')
 const Cart = require('./models/Cart')
+const Category = require('./models/Categories')
 
 const userRoute = require('./routes/users')
 const articleRoute = require('./routes/articles')
@@ -22,6 +23,7 @@ const profileRoute = require('./routes/profile')
 const favouriteRoute = require('./routes/favourites')
 const productRoute = require('./routes/products')
 const cartRoute = require('./routes/cart')
+const categoryRoute = require('./routes/categories')
 
 const frontendAdminRoute = require('./routes/frAdmin')
 const frontendUserRoute = require('./routes/frUser')
@@ -56,6 +58,10 @@ Tag.belongsToMany(Product, {through: 'ProductsTags',uniqueKey:false,timestamps:f
 //One to many relation between Article and Comments
 Product.hasMany(Comment,{onDelete: 'CASCADE'})
 Comment.belongsTo(Product)
+
+//Products and Categories
+Category.hasMany(Product)
+Product.belongsTo(Category)
 
 //One to many relation between User and Comments
 User.hasMany(Comment,{onDelete: 'CASCADE'})
@@ -107,6 +113,7 @@ app.use('/api/profiles',profileRoute)
 app.use('/api/articles',favouriteRoute)
 app.use('/api/products', productRoute)
 app.use('/api/cart', cartRoute)
+app.use('/api/category', categoryRoute)
 app.use(notFound)
 app.use(errorHandler)
 
