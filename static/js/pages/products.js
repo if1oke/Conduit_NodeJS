@@ -56,8 +56,6 @@ const submitProduct = (image = null) => {
         }
     }
 
-    console.log(message)
-
     if (headerToken) {
         fetch('/api/products/', {
             method: 'POST',

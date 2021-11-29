@@ -1,6 +1,6 @@
 const getCategories = () => {
     $('#categoryList').html('<div class="text-center"><div class="spinner-border text-primary" role="status"></div></div>')
-    fetch('/api/category')
+    fetch('/api/categories')
         .then(res => res.json())
         .then(res => {
             let html = ''
@@ -67,7 +67,7 @@ const getProducts = () => {
                         if(oData.image) $(nTd).html(`<div class="d-flex px-2"><div><img src="/static/upload/${oData.image}" class="avatar avatar-sm rounded-circle me-2"></div></div>`)
                         }},
                     {data: 'name', fnCreatedCell: function (nTd, sData, oData) {
-                            $(nTd).html(`<a href="#">${oData.name}</a>`)
+                            $(nTd).html(`<a href="/admin/products/${oData.id}">${oData.name}</a>`)
                         }},
                     {data: 'CategoryName'},
                     {data: 'tagList'},
@@ -98,7 +98,7 @@ const deleteClick = item => {
     const remove = confirm('Удалить категорию?')
     if (remove) {
         const catName = (item.id).replace('_remove', '')
-        fetch('/api/category/' + catName, {
+        fetch('/api/categories/' + catName, {
             method: 'DELETE',
             headers: {
                 'Authorization': headerToken
@@ -120,7 +120,7 @@ const deleteClick = item => {
 const saveClick = (item) => {
     const oldCatName = (item.id).replace('_save', '')
     const newCatName = $(`#${oldCatName}_inputText`).val()
-    fetch('/api/category/' + oldCatName, {
+    fetch('/api/categories/' + oldCatName, {
         method: 'PATCH',
         headers: {
             'Authorization': headerToken,
@@ -148,7 +148,7 @@ const addCategory = () => {
     const newCategory = $('#categoryAddInput').val()
     if (newCategory.length > 1) {
         $('#categoryAdd').hide()
-        fetch('/api/category/', {
+        fetch('/api/categories/', {
             method: 'POST',
             headers: {
                 'Authorization': headerToken,

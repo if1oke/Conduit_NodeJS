@@ -113,7 +113,7 @@ app.use('/api/profiles',profileRoute)
 app.use('/api/articles',favouriteRoute)
 app.use('/api/products', productRoute)
 app.use('/api/cart', cartRoute)
-app.use('/api/category', categoryRoute)
+app.use('/api/categories', categoryRoute)
 app.use(notFound)
 app.use(errorHandler)
 

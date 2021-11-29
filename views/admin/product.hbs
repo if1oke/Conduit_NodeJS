@@ -1,34 +1,150 @@
-<style>
-    .img-fluid {
-        cursor: pointer;
-    }
-    .image-upload>input {
-        display: none;
-    }
-
-</style>
 <div class="container-fluid py-4">
     <div class="row">
-       <div class="col-12">
-           <div class="card mb-5">
-               <div class="card-body px-3 pt-1 pb-3">
-                   <input type="hidden" id="productId" value="{{productId}}">
-                   <h4 class="card-title">{{itemName}}</h4>
-                   <div class="row">
-                       <div class="col-md-3">
-                           <div class="image-upload">
-                               <label for="productImageInput">
-                                   <img id="productImageItemUpload" alt="img" class="img-fluid border-radius-md" src="/static/adminui/img/upload.png" style="display: none">
-                                   <img id="productImageItem" alt="img" class="img-fluid border-radius-md" src="/static/upload/{{productImg}}">
-                               </label>
-                               <input type="file" id="productImageInput" name="productImage">
-                           </div>
-                       </div>
-                   </div>
-               </div>
-           </div>
-       </div>
+        <div class="col-12">
+            {{#if showProduct}}
+                <div class="card mb-5">
+                    <div class="card-body px-3 pt-1 pb-3">
+                        <input type="hidden" id="productId" value="{{productId}}">
+                        <div class="row mt-4 mb-4">
+                            <div class="col-md-3">
+                                <div class="image-upload">
+                                    <img id="productImageItem" alt="img" class="img-thumbnail border-radius-md"
+                                         src="/static/upload/{{productImg}}">
+                                </div>
+                                <div id="parameters">
+                                    <p class="text-sm" id="createdAt"></p>
+                                    <p class="text-sm" id="updatedAt"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <div>
+                                    <h2>{{itemName}}</h2>
+                                </div>
+                                <div id="itemInfo">
+                                    <div class="mb-2">
+                                        <span class="text-body font-weight-bolder">Категория</span>
+                                        <div id="category" class="mt-1">
+                                            <div class="spinner-border spinner-border-sm text-primary"></div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <span class="text-body font-weight-bolder">Описание</span>
+                                        <div id="description" class="mt-1">
+                                            <div class="spinner-border spinner-border-sm text-primary"></div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <span class="text-body font-weight-bolder">Наличие</span>
+                                        <div id="available" class="mt-1">
+                                            <div class="spinner-border spinner-border-sm text-primary"></div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <span class="text-body font-weight-bolder">Вес</span>
+                                        <div id="weight" class="mt-1">
+                                            <div class="spinner-border spinner-border-sm text-primary"></div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <span class="text-body font-weight-bolder">Стоимость</span>
+                                        <div id="price" class="mt-1">
+                                            <div class="spinner-border spinner-border-sm text-primary"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col text-end">
+                                <button type="button" class="btn bg-gradient-danger btn-danger mx-2" id="deleteProduct">Удалить</button>
+                                <button type="button" class="btn bg-gradient-primary btn-primary mx-2" id="editProduct">Редактировать</button>
+                                <a href="#" class="btn bg-gradient-success btn-success mx-2">Страница в магазине</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{/if}}
+
+            {{#if createProduct}}
+                <div class="card mb-5">
+                    <div class="card-body px-3 pt-1 pb-3">
+                        <h5 class="card-title mt-2">Укажите параметры</h5>
+                        <div class="row justify-content-center">
+                            <div class="col-xl-8">
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label for="category" class="form-label">Категория</label>
+                                        <select class="form-select" id="category">
+                                            <option selected value="">Укажите категорию</option>
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <label for="name" class="form-label">Наименование</label>
+                                        <input autocomplete="off" type="text" class="form-control" id="name" placeholder="Пример: skittles">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label for="description" class="form-label">Описание</label>
+                                        <textarea id="description"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label for="tags" class="form-label">Теги (разделять запятой)</label>
+                                        <input type="text" class="form-control" id="tags">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label for="weight" class="form-label">Вес, гр</label>
+                                        <input type="number" class="form-control" id="weight">
+                                    </div>
+                                    <div class="col">
+                                        <label for="price" class="form-label">Цена</label>
+                                        <input type="number" class="form-control" id="price">
+                                    </div>
+                                    <div class="col align-self-end">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input ms-auto" type="checkbox" id="available">
+                                            <label class="form-check-label text-body ms-3 text-truncate" for="available">
+                                                Доступен для заказа
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label for="image" class="form-label">Изображение</label>
+                                        <input class="form-control" type="file" name="image" id="image">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col text-end">
+                                        <button type="button" class="btn bg-gradient-primary btn-primary" id="createProductSubmit">Создать</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{/if}}
+        </div>
     </div>
 </div>
 
 <script src="/static/adminui/js/pages/product.js"></script>
+{{#if showProduct}}
+    <script>
+        initView()
+    </script>
+{{/if}}
+{{#if createProduct}}
+    <script>
+        initCreate()
+        tinyMCE.init({
+            selector: '#description',
+            language: 'ru'
+        })
+    </script>
+{{/if}}

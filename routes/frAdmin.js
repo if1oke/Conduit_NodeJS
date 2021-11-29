@@ -34,6 +34,15 @@ router.get('/products', (req, res) => {
     })
 })
 
+router.get('/products/create', (req, res) => {
+    res.render('admin/product.hbs', {
+        layout: 'layouts/layout_admin',
+        title: 'Создание товара',
+        breadcrumb: ['Главная страница', 'Товары', 'Создание товара'],
+        createProduct: true
+    })
+})
+
 router.get('/products/:id', async (req, res) => {
     const { id } = req.params
     const product = await Product.findByPk(id, {include: Tag})
@@ -44,7 +53,8 @@ router.get('/products/:id', async (req, res) => {
             itemName: product.name,
             productId: product.id,
             productImg: product.image,
-            breadcrumb: ['Главная страница', 'Товары', 'Просмотр товара']
+            breadcrumb: ['Главная страница', 'Товары', 'Просмотр товара'],
+            showProduct: true
         })
     } else {
         res.render('admin/404.hbs', {
