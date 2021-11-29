@@ -1,0 +1,34 @@
+<style>
+    .img-fluid {
+        cursor: pointer;
+    }
+    .image-upload>input {
+        display: none;
+    }
+
+</style>
+<div class="container-fluid py-4">
+    <div class="row">
+       <div class="col-12">
+           <div class="card mb-5">
+               <div class="card-body px-3 pt-1 pb-3">
+                   <input type="hidden" id="productId" value="{{productId}}">
+                   <h4 class="card-title">{{itemName}}</h4>
+                   <div class="row">
+                       <div class="col-md-3">
+                           <div class="image-upload">
+                               <label for="productImageInput">
+                                   <img id="productImageItemUpload" alt="img" class="img-fluid border-radius-md" src="/static/adminui/img/upload.png" style="display: none">
+                                   <img id="productImageItem" alt="img" class="img-fluid border-radius-md" src="/static/upload/{{productImg}}">
+                               </label>
+                               <input type="file" id="productImageInput" name="productImage">
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </div>
+    </div>
+</div>
+
+<script src="/static/adminui/js/pages/product.js"></script>
