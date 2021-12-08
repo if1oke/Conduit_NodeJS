@@ -14,6 +14,7 @@ const Comment = require('./models/Comments')
 const Product = require('./models/Products')
 const Cart = require('./models/Cart')
 const Category = require('./models/Categories')
+const Manufacture = require('./models/Manufacturer')
 
 const userRoute = require('./routes/users')
 const articleRoute = require('./routes/articles')
@@ -24,6 +25,7 @@ const favouriteRoute = require('./routes/favourites')
 const productRoute = require('./routes/products')
 const cartRoute = require('./routes/cart')
 const categoryRoute = require('./routes/categories')
+const manufactureRoute = require('./routes/manufacturers')
 
 const frontendAdminRoute = require('./routes/frAdmin')
 const frontendUserRoute = require('./routes/frUser')
@@ -62,6 +64,10 @@ Comment.belongsTo(Product)
 //Products and Categories
 Category.hasMany(Product)
 Product.belongsTo(Category)
+
+// Products and Manufacturer
+Manufacture.hasMany(Product)
+Product.belongsTo(Manufacture)
 
 //One to many relation between User and Comments
 User.hasMany(Comment,{onDelete: 'CASCADE'})
@@ -114,6 +120,7 @@ app.use('/api/articles',favouriteRoute)
 app.use('/api/products', productRoute)
 app.use('/api/cart', cartRoute)
 app.use('/api/categories', categoryRoute)
+app.use('/api/manufacturer/', manufactureRoute)
 app.use(notFound)
 app.use(errorHandler)
 

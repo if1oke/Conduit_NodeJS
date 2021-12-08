@@ -2,6 +2,7 @@ const Tag = require('../models/Tag');
 const Products = require('../models/Products');
 const crypto = require('crypto')
 const mime = require('mime-types')
+const Manufacturer = require('../models/Manufacturer')
 
 module.exports.uploadImage = async (req, res) => {
     try {
@@ -35,17 +36,26 @@ module.exports.createProduct = async (req, res) => {
         if (!data.name) throw new Error('Name is required');
         if (!data.description) throw new Error('Description is required');
         if (!data.price) throw new Error('Price is required');
-        if (!data.weight) throw new Error('Weight is requred');
+        if (!data.weight) throw new Error('Weight is required');
+        if (!data.manufacturer) throw new Error('Manufacturer is required');
+        if (!data.composition) throw new Error('Composition is required')
 
         if (!data.image) data.image = null;
 
+        let manExist = await Manufacturer.findByPk(data.manufacturer)
+        if (!manExist) {
+            manExist = await Manufacturer.create({name: data.manufacturer})
+        }
+
         let product = await Products.create({
-            category: data.category,
+            CategoryName: data.category,
+            ManufacturerName: manExist.name,
             name: data.name,
             description: data.description,
             price: data.price,
             weight: data.weight,
             available: data.available,
+            composition: data.composition,
             image: data.image
         })
 
@@ -121,6 +131,7 @@ module.exports.updateProduct = async (req, res) => {
         const price = data.price ? data.price : product.price
         const available = data.available ? data.available : product.available
         const weight = data.weight ? data.weight : product.weight
+        const composition = data.composition ? data.composition : product.composition
 
         const updatedProduct = await product.update({category, name, description, price, available, weight})
         await product.save()

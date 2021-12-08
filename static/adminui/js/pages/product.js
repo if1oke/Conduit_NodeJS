@@ -9,10 +9,12 @@ const loadItemInfo = () => {
             $('#description').html(data.description)
             $('#available').html(() => {
                 if(data.available === true) return '<span class="text-success font-weight-bold">В наличии</span>'
-                else return '<span class="text-dangerfont-weight-bold">Отсутствует</span>'
+                else return '<span class="text-danger font-weight-bold">Отсутствует</span>'
             })
             $('#weight').html(`${data.weight} гр`)
-            $('#price').html(`<span class="font-weight-bold">${data.price} ₽</span>`)
+            $('#price').html(`${data.price} ₽`)
+            $('#manufacturer').html(`<span class="font-weight-bold">${data.ManufacturerName}</span>`)
+            $('#composition').html(`<span class="text-sm">${data.composition}</span>`)
         })
 }
 
@@ -25,6 +27,13 @@ const createProductLoadParameters = () => {
                 $('#category').append(`<option value="${item}">${item}</option>`)
             })
         })
+    fetch('/api/manufacturer/').then(res => res.json())
+        .then(res => {
+            res.manufacturers.forEach(item => {
+                $('#existingManufacturer').append(`<option value="${item.name}">${item.name}</option>`)
+            })
+        })
+
 }
 
 const submit = () => {
@@ -57,6 +66,19 @@ const createProduct = (image = null) => {
     const description = $('#description').val();
     const weight = $('#weight').val();
     const price = $('#price').val();
+    const newManufacturer = $('#newManufacturer').val();
+    const existingManufacturer = $('#existingManufacturer').val()
+    const composition = $('#composition').val()
+
+    // Новый приоритетнее старого
+    let manufacturer = null
+    if(existingManufacturer.length > 1) {
+        manufacturer = existingManufacturer
+    }
+    if(newManufacturer.length > 1) {
+        manufacturer = newManufacturer
+    }
+
     let tagList = null;
     if ($('#tags').val().length > 0) {
         tagList = $('#tags').val().split(',').map(tag => {
@@ -73,6 +95,8 @@ const createProduct = (image = null) => {
     if (!description) throw new Error('Укажите описание')
     if (!weight) throw new Error('Укажите вес')
     if (!price) throw new Error('Укажите стоимость')
+    if (!manufacturer) throw new Error('Укажите произвоителя')
+    if (!composition) throw new Error('Укажите состав')
 
     const message = {
         product: {
@@ -83,6 +107,8 @@ const createProduct = (image = null) => {
             price,
             tagList,
             available,
+            manufacturer,
+            composition,
             image: image
         }
     }
@@ -109,7 +135,10 @@ const createProduct = (image = null) => {
                 throw new Error(res.errors.body)
             }
         })
-        .catch(e => console.log(e))
+        .catch(e => {
+            toastr.error(e)
+            console.log(e)
+        })
 }
 
 const initCreate = () => {

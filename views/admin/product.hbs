@@ -18,37 +18,50 @@
                             </div>
                             <div class="col-md-9">
                                 <div>
-                                    <h2>{{itemName}}</h2>
+                                    <h2 class="d-inline">{{itemName}}</h2>
+                                    <span class="font-weight-bold ms-3" id="manufacturer"></span>
                                 </div>
                                 <div id="itemInfo">
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <span class="text-body font-weight-bolder">Категория</span>
                                         <div id="category" class="mt-1">
                                             <div class="spinner-border spinner-border-sm text-primary"></div>
                                         </div>
                                     </div>
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <span class="text-body font-weight-bolder">Описание</span>
                                         <div id="description" class="mt-1">
                                             <div class="spinner-border spinner-border-sm text-primary"></div>
                                         </div>
                                     </div>
-                                    <div class="mb-2">
-                                        <span class="text-body font-weight-bolder">Наличие</span>
-                                        <div id="available" class="mt-1">
-                                            <div class="spinner-border spinner-border-sm text-primary"></div>
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <div class="mb-3">
+                                                <span class="text-body font-weight-bolder">Наличие</span>
+                                                <div id="available" class="mt-1">
+                                                    <div class="spinner-border spinner-border-sm text-primary"></div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <span class="text-body font-weight-bolder">Вес</span>
+                                                <div id="weight" class="mt-1">
+                                                    <div class="spinner-border spinner-border-sm text-primary"></div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <span class="text-body font-weight-bolder">Стоимость</span>
+                                                <div id="price" class="mt-1">
+                                                    <div class="spinner-border spinner-border-sm text-primary"></div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <span class="text-body font-weight-bolder">Вес</span>
-                                        <div id="weight" class="mt-1">
-                                            <div class="spinner-border spinner-border-sm text-primary"></div>
-                                        </div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <span class="text-body font-weight-bolder">Стоимость</span>
-                                        <div id="price" class="mt-1">
-                                            <div class="spinner-border spinner-border-sm text-primary"></div>
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <span class="text-body font-weight-bolder">Состав</span>
+                                                <div id="composition" class="mt-1">
+                                                    <div class="spinner-border spinner-border-sm text-primary"></div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -84,9 +97,29 @@
                                     </div>
                                 </div>
                                 <div class="row mb-3">
+                                    <label class="form-label">Производитель (укажите нового или выберите из списка)</label>
+                                    <div class="col">
+                                        <input type="text" class="form-control" id="newManufacturer" aria-label="Производитель" placeholder="Новый производитель...">
+                                    </div>
+                                    <div class="col-1 text-center align-self-center">
+                                        <span class="font-weight-bolder">или</span>
+                                    </div>
+                                    <div class="col">
+                                        <select class="form-select" id="existingManufacturer" aria-label="Производитель">
+                                            <option value="" selected>Выберите из списка</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
                                     <div class="col">
                                         <label for="description" class="form-label">Описание</label>
                                         <textarea id="description"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label for="composition" class="form-label">Состав</label>
+                                        <input type="text" class="form-control" id="composition">
                                     </div>
                                 </div>
                                 <div class="row mb-3">

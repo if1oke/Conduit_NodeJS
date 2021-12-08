@@ -67,7 +67,8 @@ const getProducts = () => {
                         if(oData.image) $(nTd).html(`<div class="d-flex px-2"><div><img src="/static/upload/${oData.image}" class="avatar avatar-sm rounded-circle me-2"></div></div>`)
                         }},
                     {data: 'name', fnCreatedCell: function (nTd, sData, oData) {
-                            $(nTd).html(`<a href="/admin/products/${oData.id}">${oData.name}</a>`)
+                        if (oData.ManufacturerName === null) oData.ManufacturerName = 'Не указано'
+                            $(nTd).html(`<div><a href="/admin/products/${oData.id}">${oData.name}</a></div><div class="text-sm">${oData.ManufacturerName}</div>`)
                         }},
                     {data: 'CategoryName'},
                     {data: 'tagList'},
