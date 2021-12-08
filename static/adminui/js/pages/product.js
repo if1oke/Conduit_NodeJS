@@ -1,4 +1,5 @@
 const loadItemInfo = () => {
+    $('#fotorama').html()
     const itemId = $('#productId').val()
     return fetch(`/api/products/${itemId}`)
         .then(res => res.json())
@@ -25,7 +26,41 @@ const loadItemInfo = () => {
 
             $('#createdAt').html(`${moment.utc(data.createdAt).format('DD.MM.YYYY')}`)
             $('#updatedAt').html(`${moment.utc(data.updatedAt).format('DD.MM.YYYY')}`)
+
+            let galleryHTML = ''
+            data.Images.forEach(image => {
+                galleryHTML += `
+                <a href="/static/upload/${image.name}">
+                    <img alt="" src="/static/upload/${image.name}">
+                </a>
+                `
+            })
+            $('#fotorama').html(galleryHTML).fotorama()
+
             return data
+        })
+}
+
+const removeSelectedImage = (item) => {
+    $('#deleteButtonImg').html('<div class="spinner-border spinner-border-sm text-primary"></div>')
+    let imageToRemove = $('.fotorama__active')[0]
+    let selectedImage = imageToRemove.firstChild
+    selectedImage = $(selectedImage).attr('src').split('/').slice(-1)[0]
+    fetch('/api/products/image', {
+        method: 'DELETE',
+        headers: {
+            'Content-type': 'application/json',
+            'Authorization': headerToken
+        },
+        body: JSON.stringify({
+            image: selectedImage
+        })
+    })
+        .then(res => res.json())
+        .then(res => {
+            if (res.status === 'success') {
+                document.location.reload()
+            }
         })
 }
 
@@ -343,6 +378,17 @@ const deleteProduct = () => {
             })
     }
 }
+
+// FILE UPLOAD TEST
+const inputElement = document.querySelector('#filepond')
+const pond = FilePond.create(inputElement)
+pond.setOptions({
+    server: '/api/products/uploadMulti/'
+})
+pond.onprocessfile = (error, file) => {
+    toastr.success('Файл загружен. Обновите страницу.')
+}
+
 
 $('#deleteProduct').on('click', () => {
     deleteProduct()

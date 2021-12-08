@@ -15,7 +15,7 @@
                                     <label for="image" class="form-label">Изображение</label>
                                     <input class="form-control" type="file" name="image" id="image">
                                 </div>
-                                <div id="parameters" class="px-2">
+                                <div id="parameters" class="px-2 mb-3">
                                     <p class="text-sm mb-1 font-weight-bold">
                                         <span>Создан</span>
                                         <span class="float-end" id="createdAt"></span>
@@ -24,6 +24,15 @@
                                         <span>Изменен</span>
                                         <span class="float-end" id="updatedAt"></span>
                                     </p>
+                                </div>
+                                <div id="gallery">
+                                    <input type="file" class="filepond mb-3" name="multi-files" id="filepond" multiple>
+                                    <div id="fotorama" data-nav="thumbs">
+
+                                    </div>
+                                    <div class="text-center">
+                                        <button id="deleteButtonImg" onclick="removeSelectedImage(this)" class="btn bg-gradient-danger btn-danger mt-3">Удалить изображение</button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-9">
@@ -239,6 +248,7 @@
     </div>
 </div>
 
+<script src="https://unpkg.com/filepond/dist/filepond.js"></script>
 <script src="/static/adminui/js/pages/product.js"></script>
 {{#if showProduct}}
     <script>

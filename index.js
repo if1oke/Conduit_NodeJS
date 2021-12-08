@@ -15,6 +15,7 @@ const Product = require('./models/Products')
 const Cart = require('./models/Cart')
 const Category = require('./models/Categories')
 const Manufacture = require('./models/Manufacturer')
+const Image = require('./models/Image')
 
 const userRoute = require('./routes/users')
 const articleRoute = require('./routes/articles')
@@ -30,16 +31,16 @@ const manufactureRoute = require('./routes/manufacturers')
 const frontendAdminRoute = require('./routes/frAdmin')
 const frontendUserRoute = require('./routes/frUser')
 
-const fileUpload = require('express-fileupload');
+// const fileUpload = require('express-fileupload');
 
 const app = express()
 
 //CORS
 app.use(cors({credentials: true, origin: true}))
 
-app.use(fileUpload({
-    createParentPath: true
-}))
+// app.use(fileUpload({
+//     createParentPath: true
+// }))
 
 app.set('view engine', 'hbs')
 hbs.registerPartials(__dirname + '/views/partials')
@@ -56,6 +57,10 @@ Article.belongsTo(User)
 //many to many relation between product and taglist
 Product.belongsToMany(Tag, {through: 'ProductsTags', uniqueKey: false, timestamps: false})
 Tag.belongsToMany(Product, {through: 'ProductsTags',uniqueKey:false,timestamps:false})
+
+// Product to Images
+Product.belongsToMany(Image, {through: 'ProductImages', uniqueKey: false, timestamps: false})
+Image.belongsToMany(Product, {through: 'ProductImages', uniqueKey: false, timestamps: false})
 
 //One to many relation between Article and Comments
 Product.hasMany(Comment,{onDelete: 'CASCADE'})
@@ -91,6 +96,7 @@ sync()
 
 
 app.use(express.json())
+app.use(express.urlencoded())
 app.use(morgan('tiny'))
 
 app.get('/',(req,res) => {
@@ -113,7 +119,7 @@ app.use('/admin', frontendAdminRoute)
 // BACKEND
 app.use('/api',userRoute)
 app.use('/api/articles',articleRoute)
-app.use('/api/products',commentRoute)
+app.use('/api/comments',commentRoute)
 app.use('/api/tags',tagRoute)
 app.use('/api/profiles',profileRoute)
 app.use('/api/articles',favouriteRoute)

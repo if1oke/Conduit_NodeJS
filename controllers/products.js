@@ -1,8 +1,65 @@
 const Tag = require('../models/Tag');
 const Products = require('../models/Products');
+const Image = require('../models/Image')
 const crypto = require('crypto')
 const mime = require('mime-types')
 const Manufacturer = require('../models/Manufacturer')
+
+module.exports.deleteImage = async (req, res) => {
+    try {
+        console.log(req.body.image)
+        const image = await Image.findByPk(req.body.image)
+        if (!image) {
+            res.status(404);
+            throw new Error('Product not found')
+        }
+        await Image.destroy({where: {name: req.body.image}})
+        res.status(200).json({'status': 'success'})
+    } catch (e) {
+        return res.status(422).json({
+            errors: { body: ['Could not delete image', e.message] },
+        });
+    }
+}
+
+module.exports.uploadM = async (req, res) => {
+    try {
+        let file = ''
+        const re = new RegExp(/\d$/)
+        const productId = req.get('Referrer').match(re)[0]
+
+        const product = await Products.findByPk(productId)
+
+        if (!product) {
+            res.status(404);
+            throw new Error('Product not found')
+        }
+
+        req.files.forEach(item => {
+            filename = item.filename
+        })
+
+        if (req.files) {
+            for (let item of req.files) {
+                let imageExists = await Image.findByPk(item.filename);
+                let newImage;
+                if (!imageExists) {
+                    newImage = await Image.create({ name: item.filename });
+                    product.addImage(newImage);
+                } else {
+                    product.addImage(imageExists);
+                }
+            }
+        }
+
+        console.log(file)
+        res.status(200).send(file)
+    } catch (e) {
+        return res.status(422).json({
+            errors: { body: ['Could not upload image', e.message] },
+        });
+    }
+}
 
 module.exports.uploadImage = async (req, res) => {
     try {
@@ -72,7 +129,7 @@ module.exports.createProduct = async (req, res) => {
             }
         }
 
-        product = await Products.findByPk(product.id, {include: Tag})
+        product = await Products.findByPk(product.id, {include: [Tag, Image]})
         res.status(201).json({product})
     } catch (e) {
         return res.status(422).json({
@@ -84,7 +141,7 @@ module.exports.createProduct = async (req, res) => {
 module.exports.getProduct = async (req, res) => {
     try {
         const { id } = req.params;
-        let product = await Products.findByPk(id, {include: Tag});
+        let product = await Products.findByPk(id, {include: [Tag, Image]});
         res.status(200).json({ product })
     } catch (e) {
         return res.status(422).json({
@@ -96,7 +153,7 @@ module.exports.getProduct = async (req, res) => {
 module.exports.deleteProduct = async (req, res) => {
     try {
         const { id } = req.params
-        let product = await Products.findByPk(id, {include: Tag})
+        let product = await Products.findByPk(id, {include: [Tag, Image]})
 
         if (!product) {
             res.status(404);
@@ -118,7 +175,7 @@ module.exports.updateProduct = async (req, res) => {
         if (!req.body.product) throw new error('No product data');
         const data = req.body.product
         const id = req.params.id
-        let product = await Products.findByPk(id, {include: Tag})
+        let product = await Products.findByPk(id, {include: [Tag, Image]})
 
         if (!product) {
             res.status(404)
