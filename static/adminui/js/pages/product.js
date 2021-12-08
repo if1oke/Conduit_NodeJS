@@ -1,6 +1,6 @@
 const loadItemInfo = () => {
     const itemId = $('#productId').val()
-    fetch(`/api/products/${itemId}`)
+    return fetch(`/api/products/${itemId}`)
         .then(res => res.json())
         .then(res => {
             console.log(res)
@@ -13,30 +13,113 @@ const loadItemInfo = () => {
             })
             $('#weight').html(`${data.weight} гр`)
             $('#price').html(`${data.price} ₽`)
+            let tagsHTML = ''
+            data.Tags.forEach((item, idx, array) => {
+                if (idx === array.length -1) tagsHTML += item.name
+                else tagsHTML += `${item.name}, `
+            })
+            $('#tags').html(tagsHTML)
             $('#manufacturer').html(`<span class="font-weight-bold">${data.ManufacturerName}</span>`)
             $('#composition').html(`<span class="text-sm">${data.composition}</span>`)
+            $('#productImageItem').attr('src', `/static/upload/${data.image}`)
+
+            $('#createdAt').html(`${moment.utc(data.createdAt).format('DD.MM.YYYY')}`)
+            $('#updatedAt').html(`${moment.utc(data.updatedAt).format('DD.MM.YYYY')}`)
+            return data
         })
 }
 
-const createProductLoadParameters = () => {
+const loadCategories = () => {
     // load categories
-    fetch('/api/categories')
+    return fetch('/api/categories')
         .then(res => res.json())
         .then(res => {
             res.categories.forEach(item => {
                 $('#category').append(`<option value="${item}">${item}</option>`)
             })
+            return res.categories
         })
-    fetch('/api/manufacturer/').then(res => res.json())
+}
+
+const loadManufacturers = () => {
+    // load manufacturers
+    return fetch('/api/manufacturer/').then(res => res.json())
         .then(res => {
             res.manufacturers.forEach(item => {
                 $('#existingManufacturer').append(`<option value="${item.name}">${item.name}</option>`)
             })
+            return res.manufacturers
         })
-
 }
 
-const submit = () => {
+const editShow = async () => {
+    const productData = await loadItemInfo()
+    const categoriesData = await loadCategories()
+    const manufacturersData = await loadManufacturers()
+    console.log(productData)
+    console.log(categoriesData)
+    console.log(manufacturersData)
+
+    $('#nameEdit').val(productData.name)
+
+    categoriesData.forEach(item => {
+        console.log(item)
+        if (productData.CategoryName === item) $('#categoryEdit').append(`<option value="${item}" selected>${item}</option>`)
+        else $('#categoryEdit').append(`<option value="${item}">${item}</option>`)
+    })
+
+    manufacturersData.forEach(item => {
+        if (productData.ManufacturerName === null) $('#existingManufacturer').prepend(`<option value="" selected>Выберите из списка</option>`)
+        else if (productData.ManufacturerName === item) $('#existingManufacturer').prepend(`<option value="${item}" selected>${item}</option>`)
+        else $('#existingManufacturer').append(`<option value="${item}">${item}</option>`)
+    })
+
+    $('#descriptionEdit').html(productData.description)
+
+    tinyMCE.init({
+        selector: '#descriptionEdit',
+        language: 'ru'
+    })
+
+    if (productData.available === true) $('#availableEdit').prop('checked', true)
+
+    let tagsValue = ''
+    productData.Tags.forEach((item, idx, array) => {
+        if (idx === array.length -1) tagsValue += item.name
+        else tagsValue += `${item.name}, `
+    })
+    $('#tagsEdit').val(tagsValue)
+
+    $('#weightEdit').val(productData.weight)
+    $('#priceEdit').val(productData.price)
+    $('#compositionEdit').val(productData.composition)
+
+    $('.product-info').hide()
+    $('.product-edit').show()
+
+    // hide buttons
+    $('#deleteProduct').hide()
+    $('#productPage').hide()
+    $('#editProduct').hide()
+    $('#cancelEdit').show()
+    $('#doEdit').show()
+
+    $('#cancelEdit').on('click', () => {
+        $('.product-info').show()
+        $('.product-edit').hide()
+        $('#deleteProduct').show()
+        $('#productPage').show()
+        $('#editProduct').show()
+        $('#cancelEdit').hide()
+        $('#doEdit').hide()
+    })
+
+    $('#doEdit').on('click', () => {
+        submit(true)
+    })
+}
+
+const submit = (update = false) => {
     const file = $('#image').prop('files')[0]
     if (file){
         let data = new FormData()
@@ -48,15 +131,108 @@ const submit = () => {
             .then(res => res.json())
             .then(res => {
                 if (res.fileName) {
-                    createProduct(res.fileName)
+                    if (!update) createProduct(res.fileName)
+                    else updateProduct(res.fileName)
                 } else {
                     toastr.error('Ошибка загрузки файла')
                     throw new Error('Ошибка загрузки файла')
                 }
             })
     } else {
-        createProduct()
+        if (!update) createProduct()
+        else updateProduct()
     }
+}
+
+$('#editProduct').on('click', () => {
+    editShow()
+})
+
+const updateProduct = (image = null) => {
+
+    const id = $('#productId').val()
+    const category = $('#categoryEdit').val();
+    const name = $('#nameEdit').val();
+    tinyMCE.triggerSave()
+    const description = $('#descriptionEdit').val();
+    const weight = $('#weightEdit').val();
+    const price = $('#priceEdit').val();
+    const newManufacturer = $('#newManufacturer').val();
+    const existingManufacturer = $('#existingManufacturer').val()
+    const composition = $('#compositionEdit').val()
+
+    // Новый приоритетнее старого
+    let manufacturer = null
+    if(existingManufacturer.length > 1) {
+        manufacturer = existingManufacturer
+    }
+    if(newManufacturer.length > 1) {
+        manufacturer = newManufacturer
+    }
+
+    let tagList = null;
+    if ($('#tagsEdit').val().length > 0) {
+        tagList = $('#tagsEdit').val().split(',').map(tag => {
+            return tag.trim()
+        });
+    }
+    let available = 0
+    if ($('#availableEdit').is(':checked')) {
+        available = 1
+    }
+
+    if (!category || category === '') throw new Error('Укажите категорию')
+    if (!name) throw new Error('Укажите название')
+    if (!description) throw new Error('Укажите описание')
+    if (!weight) throw new Error('Укажите вес')
+    if (!price) throw new Error('Укажите стоимость')
+    if (!manufacturer) throw new Error('Укажите произвоителя')
+    if (!composition) throw new Error('Укажите состав')
+
+    const message = {
+        product: {
+            category,
+            name,
+            description,
+            weight,
+            price,
+            tagList,
+            available,
+            manufacturer,
+            composition
+        }
+    }
+
+    if (image) message.product.image = image
+
+    console.log(message)
+
+    $('#doEdit').html('<div class="spinner-border spinner-border-sm text-primary"></div>')
+
+    fetch(`/api/products/${id}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-type': 'application/json',
+            'Authorization': headerToken
+        },
+        body: JSON.stringify(message)
+    })
+        .then(res => res.json())
+        .then(res => {
+            console.log(res)
+            if (res.updatedProduct) {
+                toastr.success('Редактирование прошло успешно')
+                $('#doEdit').html('Сохранить')
+                $('#cancelEdit').trigger('click')
+                loadItemInfo()
+            } else {
+                $('#doEdit').html('Сохранить')
+                toastr.error(`Произошла ошибка:\n${res}`)
+            }
+        })
+        .catch(e => {
+            toastr.error(`Произошла ошибка:\n${e}`)
+        })
 }
 
 const createProduct = (image = null) => {
@@ -141,8 +317,40 @@ const createProduct = (image = null) => {
         })
 }
 
+const deleteProduct = () => {
+    const remove = confirm('Удалить товар?')
+    if (remove) {
+        const id = $('#productId').val()
+        fetch(`/api/products/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': headerToken
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.message) {
+                    toastr.success('Удаление прошло успешно')
+                    setTimeout(()=> {
+                        document.location.href = '/admin/products/'
+                    }, 1000)
+                } else {
+                    throw new error('Ошибка')
+                }
+            })
+            .catch(e => {
+                toastr.error(`Ошибка:\n${e.message}`)
+            })
+    }
+}
+
+$('#deleteProduct').on('click', () => {
+    deleteProduct()
+})
+
 const initCreate = () => {
-    createProductLoadParameters()
+    loadCategories()
+    loadManufacturers()
     $('#createProductSubmit').on('click', () => {
         submit()
     })

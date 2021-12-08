@@ -125,16 +125,32 @@ module.exports.updateProduct = async (req, res) => {
             throw new Error('Product not found')
         }
 
-        const category = data.category ? data.category : product.category
+        const CategoryName = data.category ? data.category : product.CategoryName
         const name = data.name ? data.name : product.name
         const description = data.description ? data.description : product.description
         const price = data.price ? data.price : product.price
         const available = data.available ? data.available : product.available
         const weight = data.weight ? data.weight : product.weight
         const composition = data.composition ? data.composition : product.composition
+        const ManufacturerName = data.manufacturer ? data.manufacturer : product.ManufacturerName
+        const image = data.image ? data.image : product.image
 
-        const updatedProduct = await product.update({category, name, description, price, available, weight})
+        const updatedProduct = await product.update({CategoryName, name, description, price, available, weight, composition, ManufacturerName, image})
         await product.save()
+
+        if (data.tagList) {
+            for (let t of data.tagList) {
+                let tagExists = await Tag.findByPk(t);
+                let newTag;
+                if (!tagExists) {
+                    newTag = await Tag.create({ name: t });
+                    product.addTag(newTag);
+                } else {
+                    product.addTag(tagExists);
+                }
+            }
+        }
+
         res.status(200).json({updatedProduct})
     } catch (e) {
         const code = res.statusCode ? res.statusCode : 422

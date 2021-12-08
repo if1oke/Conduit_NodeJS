@@ -62,6 +62,10 @@ const getProducts = () => {
                     url: '/static/adminui/datatable_ru.json'
                 },
                 data: data,
+                columnDefs: [{
+                    targets: [4, 5, 6],
+                    className: 'text-center'
+                }],
                 columns: [
                     {data: 'image', fnCreatedCell: function (nTd, sData, oData) {
                         if(oData.image) $(nTd).html(`<div class="d-flex px-2"><div><img src="/static/upload/${oData.image}" class="avatar avatar-sm rounded-circle me-2"></div></div>`)

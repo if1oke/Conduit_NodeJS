@@ -7,13 +7,23 @@
                         <input type="hidden" id="productId" value="{{productId}}">
                         <div class="row mt-4 mb-4">
                             <div class="col-md-3">
-                                <div class="image-upload">
+                                <div class="image-upload mb-3">
                                     <img id="productImageItem" alt="img" class="img-thumbnail border-radius-md"
                                          src="/static/upload/{{productImg}}">
                                 </div>
-                                <div id="parameters">
-                                    <p class="text-sm" id="createdAt"></p>
-                                    <p class="text-sm" id="updatedAt"></p>
+                                <div class="mb-3 product-edit" style="display: none">
+                                    <label for="image" class="form-label">Изображение</label>
+                                    <input class="form-control" type="file" name="image" id="image">
+                                </div>
+                                <div id="parameters" class="px-2">
+                                    <p class="text-sm mb-1 font-weight-bold">
+                                        <span>Создан</span>
+                                        <span class="float-end" id="createdAt"></span>
+                                    </p>
+                                    <p class="text-sm mb-1 font-weight-bold">
+                                        <span>Изменен</span>
+                                        <span class="float-end" id="updatedAt"></span>
+                                    </p>
                                 </div>
                             </div>
                             <div class="col-md-9">
@@ -22,19 +32,80 @@
                                     <span class="font-weight-bold ms-3" id="manufacturer"></span>
                                 </div>
                                 <div id="itemInfo">
-                                    <div class="mb-3">
-                                        <span class="text-body font-weight-bolder">Категория</span>
-                                        <div id="category" class="mt-1">
+                                    <div class="mb-3 product-edit" style="display: none">
+                                        <label for="nameEdit" class="form-label">Наименование</label>
+                                        <input autocomplete="off" type="text" class="form-control" id="nameEdit" placeholder="Пример: skittles">
+                                    </div>
+                                    <div class="mb-3 product-info">
+                                        <div id="category" class="">
                                             <div class="spinner-border spinner-border-sm text-primary"></div>
                                         </div>
                                     </div>
-                                    <div class="mb-3">
+                                    <div class="mb-3 product-edit" style="display: none">
+                                        <span class="form-label">Категория</span>
+                                        <select class="form-select" id="categoryEdit">
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 product-edit" style="display: none">
+                                        <div class="row mb-3">
+                                            <label class="form-label">Производитель (укажите нового или выберите из списка)</label>
+                                            <div class="col">
+                                                <input type="text" class="form-control" id="newManufacturer" aria-label="Производитель" placeholder="Новый производитель...">
+                                            </div>
+                                            <div class="col-1 text-center align-self-center">
+                                                <span class="font-weight-bolder">или</span>
+                                            </div>
+                                            <div class="col">
+                                                <select class="form-select" id="existingManufacturer" aria-label="Производитель">
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 product-info">
                                         <span class="text-body font-weight-bolder">Описание</span>
                                         <div id="description" class="mt-1">
                                             <div class="spinner-border spinner-border-sm text-primary"></div>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="mb-3 product-info">
+                                        <span class="text-body font-weight-bolder">Теги</span>
+                                        <div id="tags" class="mt-1">
+                                            <div class="spinner-border spinner-border-sm text-primary"></div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 product-edit" style="display: none">
+                                        <label for="descriptionEdit" class="form-label">Описание</label>
+                                        <textarea id="descriptionEdit"></textarea>
+                                    </div>
+                                    <div class="mb-3 product-edit" style="display: none">
+                                        <div class="mb-3">
+                                            <label for="tagsEdit" class="form-label">Теги</label>
+                                            <input type="text" class="form-control" id="tagsEdit">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="compositionEdit" class="form-label">Состав</label>
+                                            <input type="text" class="form-control" id="compositionEdit">
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col">
+                                                <label for="weightEdit" class="form-label">Вес, гр</label>
+                                                <input type="number" class="form-control" id="weightEdit">
+                                            </div>
+                                            <div class="col">
+                                                <label for="priceEdit" class="form-label">Цена</label>
+                                                <input type="number" class="form-control" id="priceEdit">
+                                            </div>
+                                            <div class="col mt-auto">
+                                                <div class="form-check form-switch ps-0">
+                                                    <input class="form-check-input ms-auto" type="checkbox" id="availableEdit">
+                                                    <label class="form-check-label text-body ms-3 text-truncate" for="availableEdit">
+                                                        Доступен для заказа
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class=" product-info">
                                         <div class="col-3">
                                             <div class="mb-3">
                                                 <span class="text-body font-weight-bolder">Наличие</span>
@@ -71,7 +142,9 @@
                             <div class="col text-end">
                                 <button type="button" class="btn bg-gradient-danger btn-danger mx-2" id="deleteProduct">Удалить</button>
                                 <button type="button" class="btn bg-gradient-primary btn-primary mx-2" id="editProduct">Редактировать</button>
-                                <a href="#" class="btn bg-gradient-success btn-success mx-2">Страница в магазине</a>
+                                <a href="#" class="btn bg-gradient-success btn-success mx-2" id="productPage">Страница в магазине</a>
+                                <button type="button" class="btn bg-gradient-danger btn-danger mx-2" id="cancelEdit" style="display: none">Отмена</button>
+                                <button type="button" class="btn bg-gradient-primary btn-primary mx-2" id="doEdit" style="display: none">Сохранить</button>
                             </div>
                         </div>
                     </div>
