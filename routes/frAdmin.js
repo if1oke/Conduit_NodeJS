@@ -26,6 +26,14 @@ router.get('/users', (req, res) => {
     })
 })
 
+router.get('/articles', (req, res) => {
+    res.render('admin/articles.hbs', {
+        layout: 'layouts/layout_admin',
+        title: 'Список публикаций',
+        breadcrumb: ['Главная страница', 'Новости']
+    })
+})
+
 router.get('/products', (req, res) => {
     res.render('admin/products.hbs', {
         layout: 'layouts/layout_admin',
