@@ -5,7 +5,7 @@ const Article = sequelize.define('Article',{
     slug : {
         type: DataTypes.STRING,
         allowNull: false ,
-        primaryKey: true  
+        primaryKey: true
     },
     title: {
         type: DataTypes.STRING,
@@ -14,9 +14,13 @@ const Article = sequelize.define('Article',{
     description: {
         type: DataTypes.TEXT,
     },
-    body: { 
-      type: DataTypes.TEXT,  
+    body: {
+      type: DataTypes.TEXT,
       allowNull: false,
+    },
+    hidden: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
     }
 })
 
@@ -24,8 +28,8 @@ module.exports = Article
 
 /* {
   "article": {
-    
-    
+
+
     "tagList": ["dragons", "training"],
     "favorited": false,
     "favoritesCount": 0,

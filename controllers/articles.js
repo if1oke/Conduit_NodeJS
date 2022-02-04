@@ -287,3 +287,27 @@ module.exports.getFeed = async (req, res) => {
 		});
 	}
 };
+
+module.exports.upload = async (req, res) => {
+	try {
+		let uploadedImage = ''
+		console.log(req.files)
+		if (req.files) {
+			for (let item of req.files) {
+				uploadedImage = `/static/upload/articles/${item.filename}`
+			}
+
+			res.status(200).json({
+				location: uploadedImage
+			})
+		} else {
+			res.status(400).json({
+				errors: {body: 'Please add images'}
+			})
+		}
+	} catch (e) {
+		return res.status(422).json({
+			errors: { body: ['Could not create product', e.message] },
+		});
+	}
+}

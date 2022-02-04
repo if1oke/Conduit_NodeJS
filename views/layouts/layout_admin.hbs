@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="http://cdn.jsdelivr.net/npm/@mdi/font@6.5.95/css/materialdesignicons.min.css">
     <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
     <link  href="https://cdnjs.cloudflare.com/ajax/libs/fotorama/4.6.4/fotorama.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>{{title}}</title>
 </head>
 <body class="g-sidenav-show bg-gray-100">
@@ -34,14 +35,16 @@
 <script src="https://cdn.tiny.cloud/1/es0ux3h75imumtdgsvjcxajfncdcwgd8sigo56526y5lhc9i/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 <script src="/static/adminui/js/plugins/tiny-ru.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fotorama/4.6.4/fotorama.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
 <script>
-    let User = undefined
 
     const deleteCookie = (name) => {
         setCookie(name, "", {
             'max-age': -1
         })
     }
+
+    let User = undefined
 
     const getCookie = name => {
         let matches = document.cookie.match(new RegExp(

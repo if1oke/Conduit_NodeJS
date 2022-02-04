@@ -52,7 +52,6 @@ module.exports.uploadM = async (req, res) => {
             }
         }
 
-        console.log(file)
         res.status(200).send(file)
     } catch (e) {
         return res.status(422).json({
@@ -64,9 +63,9 @@ module.exports.uploadM = async (req, res) => {
 module.exports.uploadImage = async (req, res) => {
     try {
 
-        if (!req.files || Object.keys(req.files).length === 0) {
-            return res.status(400).send('No files were uploaded.');
-        }
+        // if (!req.files || Object.keys(req.files).length === 0) {
+        //     return res.status(400).send('No files were uploaded.');
+        // }
 
         const file = req.files.image
         const hashName = crypto.createHash('sha1').update(file.name + new Date().getMilliseconds()).digest('hex')

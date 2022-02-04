@@ -1,0 +1,67 @@
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-5">
+                <div class="card-body px-3 pt-1 pb-3">
+                    {{#if createArticle}}
+                        <div>
+                            <div class="mb-4 mt-3 input-group input-group-lg">
+                                <input aria-label="Заголовок" autocomplete="off" type="text" class="fs-3 form-control form-control-lg" id="article-title" placeholder="Заголовок">
+                                {{#if createArticle}}
+                                    <button id="save-article" type="button" class="px-4 fs-5 mb-0 btn btn-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Опубликовать">
+                                        <span class="fa fa-circle-check"></span>
+                                    </button>
+                                {{else}}
+                                    <button id="save-article" type="button" class="px-4 fs-5 mb-0 btn btn-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Сохранить черновик">
+                                        <span class="fa fa-floppy-disk"></span>
+                                    </button>
+                                {{/if}}
+                            </div>
+                            <div class="mb-4">
+                                <span class="text-body font-weight-bolder">Краткое описание</span>
+                                <div id="description" class="mt-1">
+                                    <div class="spinner-border spinner-border-sm text-primary"></div>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <span id="show-body-title" class="text-body font-weight-bolder">Полный текст</span>
+                                <div id="body" class="mt-1">
+                                    <div class="spinner-border spinner-border-sm text-primary"></div>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <span class="text-body font-weight-bolder">Теги (через запятую)</span>
+                                <input id="article-tags" type="text" class="form-control" aria-label="Теги" placeholder="дорого, вкусно...">
+                            </div>
+                        </div>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{#if createArticle}}
+    <script>
+        $('.spinner-border').remove()
+        tinyMCE.init({
+            selector: '#description',
+            language: 'ru',
+            images_upload_url: '/api/articles/upload',
+            automatic_uploads: true,
+            file_picker_types: 'image',
+            toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | removeformat | image',
+            plugins: 'link image imagetools table'
+        })
+        tinyMCE.init({
+            selector: '#body',
+            language: 'ru',
+            images_upload_url: '/api/articles/upload',
+            automatic_uploads: true,
+            file_picker_types: 'image',
+            toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | removeformat | image',
+            plugins: 'link image imagetools table'
+        })
+    </script>
+    <script src="/static/js/pages/articles.js"></script>
+{{/if}}
